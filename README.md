@@ -17,12 +17,13 @@
 - 🎱 **Animación de bolas estilo máquina de aire** — Las bolas vuelan aleatoriamente mientras el sorteo está en curso, simulando una máquina de lotería real.
 - 🔢 **Revelación dígito a dígito** — El número ganador se revela progresivamente con confetti en cada dígito.
 - 🏆 **Bolitas de lotería** — Cada dígito del número ganador se muestra dentro de una bolita circular con efecto 3D.
-- 💾 **Persistencia con localStorage** — Los ganadores se guardan automáticamente en el navegador y se recuperan si se recarga la página.
+- 💾 **Persistencia con localStorage** — Los ganadores y el contador de intentos se guardan automáticamente en el navegador y se recuperan al recargar la página.
+- 🎯 **3 intentos por premio** — Cada premio cuenta con 3 intentos para asignar un ganador; el botón se bloquea solo cuando esos intentos se agotan.
 - 📄 **PDF profesional** — Genera un reporte con diseño corporativo, tarjetas por premio, estado visual y barra de progreso del sorteo.
 - 🎉 **Confetti y fuegos artificiales** — Efectos visuales al revelar cada dígito y al completar el sorteo.
 - 👁️ **Panel de ganadores flotante** — Lista lateral con imagen, nombre del premio y número ganador de cada premio.
 - 🔄 **Navegación entre premios** — Permite avanzar o retroceder entre los premios disponibles.
-- 🔁 **Reinicio completo** — Limpia todos los ganadores del estado y del localStorage.
+- 🔁 **Reinicio completo** — Limpia todos los ganadores, reinicia los intentos a 3 y borra el almacenamiento local.
 
 ---
 
@@ -103,6 +104,7 @@ const initialPrizes = [
     buttonBg: "bg-red-600",
     buttonHover: "hover:bg-red-700",
     winnerId: null,
+    attemptsLeft: 3,
   },
   // ...más premios
 ];
@@ -114,26 +116,27 @@ const initialPrizes = [
 
 ## 🎲 Lógica del sorteo
 
-- El rango de boletos es del **00001 al 02500**.
+- El rango de boletos es del **00001 al 03000**.
 - El sistema garantiza que **no se repita un ganador** entre premios.
+- Cada premio dispone de **3 intentos** para asignar un ganador. Si falla un intento, el contador disminuye y el botón se bloqueará solo cuando se agoten los 3.
 - El número se revela **dígito a dígito** con un intervalo de ~3.7 segundos por dígito.
 - Las bolas dejan de volar automáticamente al finalizar el sorteo.
 
 ```js
 // Rango configurable aquí:
-Math.floor(Math.random() * 2500) + 1
+Math.floor(Math.random() * 3000) + 1
 ```
 
 ---
 
 ## 💾 Persistencia (localStorage)
 
-Los ganadores se almacenan automáticamente bajo la key `"rifa_winners"`:
+Los ganadores y los intentos restantes se almacenan automáticamente bajo la key `"rifa_winners"`:
 
 ```json
 {
-  "1": "01234",
-  "2": "00987"
+  "1": { "winnerId": "01234", "attemptsLeft": 2 },
+  "2": { "winnerId": null, "attemptsLeft": 3 }
 }
 ```
 
